@@ -28,12 +28,13 @@ app.listen(3000, () => {
   });
 
   //cau 3
-  app.get("/api/products/low_instock", async (req, res) => {
+  app.get("/api/search", async (req, res) => {
     try {
-      const products = await db.inventory
-        .find({ instock: { $lt: 100 } })
-        .toArray();
-      res.send(products);
+      const quantity = req.query.qty
+      if (quantity === "low" ){
+        const products = await db.inventory.find({ instock: { $lt: 100 } }).toArray();
+        res.send(products);
+      }
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal server error");
@@ -62,7 +63,7 @@ app.listen(3000, () => {
     const {Name, PhoneNumber, item, quantity} = req.body
     try {
       const orders = await db.order.insertOne({Name, PhoneNumber, item, quantity});
-      res.json(result.ops[0]);
+      res.json(orders);
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal server error");
